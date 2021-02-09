@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import Footer from "./Footer";
+import NavBar from "./Nav";
 
 const list = [
     {
@@ -43,8 +45,8 @@ export default class Todo extends Component {
                 <div key={index}>
                     <h2>{todo.date.toLocaleString()}</h2>
                     {todo.todos.map((t, index) => {
-                        const classes = ['d-inline']
-                        t.done && classes.push('done')
+                        const classes = ["d-inline"];
+                        t.done && classes.push("done");
                         return (
                             <div ket={index}>
                                 <input
@@ -53,13 +55,23 @@ export default class Todo extends Component {
                                     className="d-inline"
                                     checked={t.done}
                                 />
-                                <p className={classes.join(' ')} style={{color: t.backgroundColor}}>{t.text}</p>
+                                <p
+                                    className={classes.join(" ")}
+                                    style={{ color: t.backgroundColor }}>
+                                    {t.text}
+                                </p>
                             </div>
                         );
                     })}
                 </div>
             );
         });
-        return <div>{todoArray}</div>;
+        return (
+            <>
+                <NavBar />
+                    <div>{todoArray}</div>
+                <Footer />
+            </>
+        );
     }
 }

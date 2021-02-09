@@ -5,17 +5,17 @@ import Footer from "./Components/Footer";
 import AddTodo from "./Components/AddTodo";
 import { Container } from "react-bootstrap";
 import Todo from "./Components/Todo";
+import Login from "./Components/Login";
 
 function App() {
-    console.log(new Date().toDateString());
+    // console.log(new Date().toDateString());
 
     return (
         <Container>
-            <Nav />
-            <Todo />
+            {/* <Login /> */}
+            {/* <Todo /> */}
             {/* <AddTodo /> */}
-            {/* <Calendar /> */}
-            <Footer />
+            <Calendar />
         </Container>
     );
 }
