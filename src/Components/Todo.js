@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { db } from "../firebase";
 import Footer from "./Footer";
 import NavBar from "./Nav";
 
@@ -37,7 +38,16 @@ export default class Todo extends Component {
             list,
         };
     }
-
+    componentDidMount() {
+        db.collection("users")
+            .get()
+            .then((querySnapshot) => {
+                console.log(querySnapshot);
+                querySnapshot.forEach((doc) => {
+                    console.log(doc.data());
+                });
+            });
+    }
     render() {
         const todoArray = this.state.list.map((todo, index) => {
             console.log(todo.todos.text);
@@ -48,12 +58,12 @@ export default class Todo extends Component {
                         const classes = ["d-inline"];
                         t.done && classes.push("done");
                         return (
-                            <div ket={index}>
+                            <div key={index}>
                                 <input
                                     type="checkbox"
                                     name="todo"
                                     className="d-inline"
-                                    checked={t.done}
+                                    // checked={t.done}
                                 />
                                 <p
                                     className={classes.join(" ")}
@@ -69,7 +79,7 @@ export default class Todo extends Component {
         return (
             <>
                 <NavBar />
-                    <div>{todoArray}</div>
+                <div>{todoArray}</div>
                 <Footer />
             </>
         );
