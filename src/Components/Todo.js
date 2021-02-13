@@ -1,5 +1,7 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
+import { Button } from "react-bootstrap";
 import { db } from "../firebase";
+import { useAuth } from "../hoc/AuthenticationProvider";
 import Footer from "./Footer";
 import NavBar from "./Nav";
 
@@ -31,57 +33,59 @@ const list = [
     },
 ];
 
-export default class Todo extends Component {
-    constructor() {
-        super();
-        this.state = {
-            list,
-        };
-    }
-    componentDidMount() {
-        db.collection("users")
-            .get()
-            .then((querySnapshot) => {
-                console.log(querySnapshot);
-                querySnapshot.forEach((doc) => {
-                    console.log(doc.data());
-                });
+const Todo = (props) => {
+    const [todos, changeTodos] = useState(list);
+    const { currentUser, logout } = useAuth();
+
+    useEffect(() => {
+        (async function getDB() {
+            let query = await db.collection("users").get();
+            // console.log(query);
+            query.forEach((name) => {
+                console.log(name.data());
             });
-    }
-    render() {
-        const todoArray = this.state.list.map((todo, index) => {
-            console.log(todo.todos.text);
-            return (
-                <div key={index}>
-                    <h2>{todo.date.toLocaleString()}</h2>
-                    {todo.todos.map((t, index) => {
-                        const classes = ["d-inline"];
-                        t.done && classes.push("done");
-                        return (
-                            <div key={index}>
-                                <input
-                                    type="checkbox"
-                                    name="todo"
-                                    className="d-inline"
-                                    // checked={t.done}
-                                />
-                                <p
-                                    className={classes.join(" ")}
-                                    style={{ color: t.backgroundColor }}>
-                                    {t.text}
-                                </p>
-                            </div>
-                        );
-                    })}
-                </div>
-            );
-        });
+        })();
+    });
+
+    const todosArray = todos.map((todo, index) => {
         return (
-            <>
-                <NavBar />
-                <div>{todoArray}</div>
-                <Footer />
-            </>
+            <div key={index}>
+                <h2>{todo.date.toLocaleString()}</h2>
+                {todo.todos.map((t, index) => {
+                    const classes = ["d-inline"];
+                    t.done && classes.push("done");
+                    return (
+                        <div key={index}>
+                            <input
+                                type="checkbox"
+                                name="todo"
+                                className="d-inline"
+                                // checked={t.done}
+                            />
+                            <p
+                                className={classes.join(" ")}
+                                style={{ color: t.backgroundColor }}>
+                                {t.text}
+                            </p>
+                        </div>
+                    );
+                })}
+            </div>
         );
-    }
-}
+    });
+    return (
+        <>
+            <NavBar />
+            <div>{todosArray}</div>
+            <Button
+                onClick={() => {
+                    console.log(currentUser.uid);
+                }}>
+                Show Current user
+            </Button>
+            <Footer />
+        </>
+    );
+};
+
+export default Todo;

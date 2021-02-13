@@ -1,19 +1,35 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Dropdown, Form, FormLabel, Row, Button, Card } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Form, FormLabel, Row, Button, Card, Alert } from "react-bootstrap";
+import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../hoc/AuthenticationProvider";
 
 export default function Login() {
     const [email, changeEmail] = useState("");
     const [password, changePassword] = useState("");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+    const history = useHistory();
     const { login } = useAuth();
 
-    const handleSubmit = (e) => {
+    async function handleSubmit(e) {
         e.preventDefault();
-        login(email, password).then((userCredentials) => {
-            var user = userCredentials.user;
-            console.log(user.uid);
-        });
+        try {
+            setLoading(true);
+            setError("");
+            await login(email, password);
+            history.push("/");
+        } catch {
+            setError("Failed to sign in");
+        }
+        setLoading(false);
+    }
+    
+    const handleEmail = (e) => {
+        !loading && changeEmail(e.target.value);
+    };
+
+    const handlePassword = (e) => {
+        !loading && changePassword(e.target.value);
     };
 
     return (
@@ -23,6 +39,7 @@ export default function Login() {
             style={{ height: "100vh" }}>
             <Card>
                 <Card.Body>
+                    {error && <Alert variant="danger">{error}</Alert>}
                     <Form onSubmit={handleSubmit}>
                         <h2 className="text-center mb-4">Login Form</h2>
                         <Form.Group>
@@ -31,9 +48,7 @@ export default function Login() {
                                 type="email"
                                 placeholder="Enter your email"
                                 value={email}
-                                onChange={(e) =>
-                                    changeEmail(e.target.value)
-                                }></Form.Control>
+                                onChange={handleEmail}></Form.Control>
                         </Form.Group>
                         <Form.Group>
                             <FormLabel>Your password:</FormLabel>
@@ -41,9 +56,7 @@ export default function Login() {
                                 type="password"
                                 placeholder="Enter your password"
                                 value={password}
-                                onChange={(e) =>
-                                    changePassword(e.target.value)
-                                }></Form.Control>
+                                onChange={handlePassword}></Form.Control>
                         </Form.Group>
                         <div className="w-100 text-center ">
                             <Link to="/forgotPassword">
@@ -52,7 +65,8 @@ export default function Login() {
                         </div>
                         <Button
                             className="justify-content-center w-100 mt-4"
-                            type="submit">
+                            type="submit"
+                            disabled={loading}>
                             Log-In
                         </Button>
                         <div className="w-100 text-center mt-4">

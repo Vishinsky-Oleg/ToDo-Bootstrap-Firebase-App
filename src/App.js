@@ -10,17 +10,17 @@ import { Route, Switch } from "react-router-dom";
 import SignUp from "./Components/Signup";
 import ResetPassword from "./Components/ResetPassword";
 import { AuthProvider } from "./hoc/AuthenticationProvider";
+import PrivateRoute from "./hoc/PrivateRoute";
 
 function App() {
     // console.log(new Date().toDateString());
-
     return (
         <Container>
             <AuthProvider>
                 <Switch>
-                    <Route path="/" exact>
-                        <Login />
-                    </Route>
+                    <PrivateRoute path="/" exact>
+                        <Todo />
+                    </PrivateRoute>
                     <Route path="/signup">
                         <SignUp />
                     </Route>
@@ -30,12 +30,9 @@ function App() {
                     <Route path="/forgotPassword">
                         <ResetPassword />
                     </Route>
+                    
                 </Switch>
             </AuthProvider>
-
-            {/* <Todo /> */}
-            {/* <AddTodo /> */}
-            {/* <Calendar /> */}
         </Container>
     );
 }

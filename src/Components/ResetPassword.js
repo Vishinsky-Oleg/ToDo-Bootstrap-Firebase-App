@@ -1,31 +1,29 @@
 import React, { useState } from "react";
-import { Dropdown, Form, FormLabel, Row, Button, Card } from "react-bootstrap";
+import { Form, FormLabel, Row, Button, Card, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { auth } from "../firebase";
-import NavBar from "./Nav";
+import { useAuth } from "../hoc/AuthenticationProvider";
 
 export default function Login() {
     const [email, changeEmail] = useState("");
-    const [password, changePassword] = useState("");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState("");
+    const { resetPassword } = useAuth();
     const handleEmailChange = (e) => {
         changeEmail(e.target.value);
     };
 
-    const handleSignUp = () => {
-        auth.createUserWithEmailAndPassword(email, password).then(
-            (userCredentials) => {
-                var user = userCredentials.user;
-                console.log(user);
-            }
-        );
-    };
-
-    const handlePasswordChange = (e) => {
-        changePassword(e.target.value);
-    };
-
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        try {
+            setError("");
+            setLoading(true);
+            await resetPassword(email);
+            setSuccess("Check your inbox for further instructions");
+        } catch {
+            setError("Reseting password failed");
+        }
+        setLoading(false);
     };
     return (
         <Row
@@ -36,6 +34,8 @@ export default function Login() {
                 <Card.Body>
                     <Form onSubmit={handleSubmit}>
                         <h2 className="text-center mb-4">Reset password</h2>
+                        {success && <Alert variant="success">{success}</Alert>}
+                        {error && <Alert variant="danger">{error}</Alert>}
                         <Form.Group>
                             <FormLabel>Your Email:</FormLabel>
                             <Form.Control
@@ -45,11 +45,13 @@ export default function Login() {
                                 onChange={handleEmailChange}></Form.Control>
                         </Form.Group>
                         <Button
-                            onClick={handleSignUp}
+                            disabled={loading}
+                            type="submit"
                             className="justify-content-center w-100 mt-4">
                             Reset
                         </Button>
-                        <div className="w-100 text-center mt-4"><Link to="/login">Login</Link>
+                        <div className="w-100 text-center mt-4">
+                            <Link to="/login">Login</Link>
                         </div>
                     </Form>
                 </Card.Body>

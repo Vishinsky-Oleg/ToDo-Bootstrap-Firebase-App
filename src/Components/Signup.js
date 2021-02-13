@@ -1,6 +1,14 @@
 import React, { useState } from "react";
-import { Dropdown, Form, FormLabel, Row, Button, Card } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import {
+    Dropdown,
+    Form,
+    FormLabel,
+    Row,
+    Button,
+    Card,
+    Alert,
+} from "react-bootstrap";
+import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../hoc/AuthenticationProvider";
 
 export default function SignUp() {
@@ -8,13 +16,38 @@ export default function SignUp() {
     const [password, changePassword] = useState("");
     const [confirmPassword, changeConfirmPassword] = useState("");
     const { signup } = useAuth();
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+    const history = useHistory();
 
-    async function handleSubmit(e) {
+    const handleEmailChange = (e) => {
+        changeEmail(e.target.value);
+    };
+
+    const handlePasswordChange = (e) => {
+        changePassword(e.target.value);
+    };
+
+    const handlePasswordConfirmChange = (e) => {
+        changeConfirmPassword(e.target.value);
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const userCredentials = await signup(email, password);
-        console.log(userCredentials.user.uid);
-    }
+        if (password !== confirmPassword) {
+            return setError("Passwords do not match");
+        }
 
+        try {
+            setError("");
+            setLoading(true);
+            await signup(email, password);
+            history.push("/");
+        } catch (e) {
+            setError("Failed to create an account");
+        }
+        setLoading(false);
+    };
     return (
         <Row
             className="justify-content-center align-items-center"
@@ -22,6 +55,7 @@ export default function SignUp() {
             style={{ height: "100vh" }}>
             <Card>
                 <Card.Body>
+                    {error && <Alert variant="danger">{error}</Alert>}
                     <Form onSubmit={handleSubmit}>
                         <h2 className="text-center mb-4">Sign-Up Form</h2>
                         <Form.Group>
@@ -30,9 +64,7 @@ export default function SignUp() {
                                 type="email"
                                 placeholder="Enter your email"
                                 value={email}
-                                onChange={(e) =>
-                                    changeEmail(e.target.value)
-                                }></Form.Control>
+                                onChange={handleEmailChange}></Form.Control>
                         </Form.Group>
                         <Form.Group>
                             <FormLabel>Your password:</FormLabel>
@@ -40,9 +72,7 @@ export default function SignUp() {
                                 type="password"
                                 placeholder="Enter your password"
                                 value={password}
-                                onChange={(e) =>
-                                    changePassword(e.target.value)
-                                }></Form.Control>
+                                onChange={handlePasswordChange}></Form.Control>
                         </Form.Group>
                         <Form.Group>
                             <FormLabel>Confirm your password:</FormLabel>
@@ -50,8 +80,8 @@ export default function SignUp() {
                                 type="password"
                                 placeholder="Enter your password again"
                                 value={confirmPassword}
-                                onChange={(e) =>
-                                    changeConfirmPassword(e.target.value)
+                                onChange={
+                                    handlePasswordConfirmChange
                                 }></Form.Control>
                         </Form.Group>
                         <div className="w-100 text-center mt-2">
@@ -60,6 +90,7 @@ export default function SignUp() {
                         </div>
                         <Button
                             type="submit"
+                            disabled={loading}
                             className="justify-content-center w-100 mt-4">
                             Sign Up
                         </Button>
