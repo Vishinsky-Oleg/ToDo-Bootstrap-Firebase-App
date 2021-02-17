@@ -1,19 +1,66 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 // import DatePicker from "react-date-picker";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
+import { db } from "../firebase";
+import { useAuth } from "../hoc/AuthenticationProvider";
+
 import NavBar from "./Nav";
 import Footer from "./Footer";
 
 export default function Calendar() {
+    const [todos, changeTodos] = useState([]);
+    const { currentUser } = useAuth();
+    const dbRef = db.collection("users").doc(currentUser.uid);
+
     const handleDateClick = (arg) => {
-        // alert(arg.date);
-        console.log(arg);
+        console.log(arg.date.toLocaleString());
     };
 
-    const date = new Date();
-    console.log(date);
+    const pickColor = (priority, done) => {
+        const colors = {
+            danger: "#b40000",
+            warning: "#d1b61c",
+            success: "#008000",
+        };
+        if (done) {
+            return "#808080";
+        } else {
+            return colors[priority];
+        }
+    };
+
+    useEffect(() => {
+        (async function getDB() {
+            let query = (await dbRef.get()).data();
+            if (query) {
+                const processedQuery = Object.entries(query)
+                    .map((instance) => {
+                        let O = {
+                            ...instance[1],
+                            timeStamp: instance[0],
+                        };
+                        return O;
+                    })
+                    .map((todo) => {
+                        let date = todo.date.split("/");
+                        const formattedDate = `${date[2]}-${
+                            date[0].length < 2 ? `0${date[0]}` : date[0]
+                        }-${date[1].length < 2 ? `0${date[1]}` : date[1]}`;
+                        return {
+                            title: todo.text,
+                            date: formattedDate,
+                            backgroundColor: pickColor(
+                                todo.priority,
+                                todo.done
+                            ),
+                        };
+                    });
+                changeTodos(processedQuery);
+            }
+        })();
+    }, []);
     return (
         <>
             <NavBar />
@@ -21,29 +68,9 @@ export default function Calendar() {
                 plugins={[dayGridPlugin, interactionPlugin]}
                 initialView="dayGridMonth"
                 dateClick={handleDateClick}
-                // height="600px"
-                // contentHeight="100px"
                 eventColor="#378006"
                 dayMaxEventRows={true}
-                events={[
-                    {
-                        title: "myEvent",
-                        date,
-                        // end: "2021-02-07T11:30:00",
-                        backgroundColor: "rgba(5,30,55, .5)",
-                        done: true,
-                    },
-                    { title: "myEvent", date: "2021-02-09" },
-                    { title: "myEvent", date: "2021-02-09" },
-                    {
-                        title: "SuperEvent",
-                        date: "2021-02-09",
-                        backgroundColor: "rgba(5,30,55, .3)",
-                    },
-                    { title: "myEvent", date: "2021-02-09" },
-                    { title: "myEvent", date: "2021-02-09" },
-                    { title: "myEvent", date: "2021-02-09" },
-                ]}
+                events={todos}
             />
             <Footer />
         </>
