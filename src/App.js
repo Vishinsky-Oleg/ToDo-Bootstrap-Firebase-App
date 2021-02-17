@@ -11,6 +11,7 @@ import SignUp from "./Components/Signup";
 import ResetPassword from "./Components/ResetPassword";
 import { AuthProvider } from "./hoc/AuthenticationProvider";
 import PrivateRoute from "./hoc/PrivateRoute";
+import UpdateProfile from "./Components/UpdateProfile";
 
 function App() {
     // console.log(new Date().toDateString());
@@ -24,13 +25,21 @@ function App() {
                     <Route path="/signup">
                         <SignUp />
                     </Route>
-                    <Route path="/login">
+                    <PrivateRoute path="/login" exact>
                         <Login />
-                    </Route>
+                    </PrivateRoute>
                     <Route path="/forgotPassword">
                         <ResetPassword />
                     </Route>
-                    
+                    <Route path="/updateProfile">
+                        <UpdateProfile />
+                    </Route>
+                    <PrivateRoute path="/addTodo" exact>
+                        <AddTodo />
+                    </PrivateRoute>
+                    <PrivateRoute path="/calendar" exact>
+                        <Calendar />
+                    </PrivateRoute>
                 </Switch>
             </AuthProvider>
         </Container>

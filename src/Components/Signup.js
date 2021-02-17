@@ -44,7 +44,7 @@ export default function SignUp() {
             await signup(email, password);
             history.push("/");
         } catch (e) {
-            setError("Failed to create an account");
+            setError(e.toString());
         }
         setLoading(false);
     };
@@ -59,7 +59,7 @@ export default function SignUp() {
                     <Form onSubmit={handleSubmit}>
                         <h2 className="text-center mb-4">Sign-Up Form</h2>
                         <Form.Group>
-                            <FormLabel>Your login:</FormLabel>
+                            <FormLabel>Your Email:</FormLabel>
                             <Form.Control
                                 type="email"
                                 placeholder="Enter your email"

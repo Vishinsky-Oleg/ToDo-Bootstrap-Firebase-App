@@ -8,9 +8,9 @@ import { BrowserRouter as Router } from "react-router-dom";
 
 const application = (
     <Router>
-        <React.StrictMode>
+        {/* <React.StrictMode> */}
             <App />
-        </React.StrictMode>
+        {/* </React.StrictMode> */}
     </Router>
 );
 

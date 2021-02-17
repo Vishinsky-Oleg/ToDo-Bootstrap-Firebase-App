@@ -23,13 +23,13 @@ export default function Login() {
         }
         setLoading(false);
     }
-    
+
     const handleEmail = (e) => {
-        !loading && changeEmail(e.target.value);
+        changeEmail(e.target.value);
     };
 
     const handlePassword = (e) => {
-        !loading && changePassword(e.target.value);
+        changePassword(e.target.value);
     };
 
     return (

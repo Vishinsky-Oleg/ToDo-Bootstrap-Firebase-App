@@ -1,88 +1,137 @@
+import { isArraysEqual } from "@fullcalendar/react";
 import React, { useEffect, useState } from "react";
-import { Button } from "react-bootstrap";
+import { Badge, Button, Spinner } from "react-bootstrap";
 import { db } from "../firebase";
 import { useAuth } from "../hoc/AuthenticationProvider";
 import Footer from "./Footer";
 import NavBar from "./Nav";
+import firebase from "firebase/app";
 
-const list = [
-    {
-        date: new Date(2021, 12, 8).toLocaleDateString(),
-        todos: [
-            {
-                text: "Todo 1",
-                backgroundColor: "#22c619",
-                done: true,
-            },
-            {
-                text: "Todo 23235235",
-                backgroundColor: "#22c619",
-                done: true,
-            },
-        ],
-    },
-    {
-        date: new Date(2021, 12, 15).toLocaleDateString(),
-        todos: [
-            {
-                text: "Todo 1",
-                backgroundColor: "#ff0019",
-                done: false,
-            },
-        ],
-    },
-];
+import "firebase/firestore";
 
 const Todo = (props) => {
-    const [todos, changeTodos] = useState(list);
-    const { currentUser, logout } = useAuth();
+    const [todos, changeTodos] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const { currentUser } = useAuth();
+    const dbRef = db.collection("users").doc(currentUser.uid);
+
+    const priorities = {
+        danger: "High",
+        warning: "Average",
+        success: "Low",
+    };
+
+    const updateTodo = (todo) => {
+        setLoading(true);
+        const updatedTodos = todos.map((i) => {
+            if (i.timeStamp === todo.timeStamp) {
+                return { ...i, done: !i.done };
+            }
+            return i;
+        });
+        changeTodos(updatedTodos);
+        dbRef
+            .update({
+                [todo.timeStamp]: {
+                    ...todo,
+                    done: !todo.done,
+                },
+            })
+            .then(() => {
+                setLoading(false);
+            });
+        // .catch((e) => {
+        //     setError(e.toString());
+        // });
+    };
+
+    const handleDelete = (timeStamp) => {
+        // setLoading(true);
+        setLoading(true);
+        const updatedTodos = todos.filter((todo) => {
+            if (todo.timeStamp !== timeStamp) {
+                return todo;
+            }
+        });
+        changeTodos(updatedTodos);
+        dbRef
+            .update({
+                [timeStamp]: firebase.firestore.FieldValue.delete(),
+            })
+            .then(() => {
+                setLoading(false);
+            });
+    };
 
     useEffect(() => {
         (async function getDB() {
-            let query = await db.collection("users").get();
-            // console.log(query);
-            query.forEach((name) => {
-                console.log(name.data());
-            });
+            let query = (await dbRef.get()).data();
+            if (query) {
+                const processedQuery = Object.entries(query)
+                    .filter(
+                        (instance) =>
+                            instance[1].date ===
+                                new Date().toLocaleDateString() && instance
+                    )
+                    .map((instance) => {
+                        let O = {
+                            ...instance[1],
+                            timeStamp: instance[0],
+                        };
+                        return O;
+                    });
+                changeTodos(processedQuery);
+            }
         })();
-    });
+    }, []);
 
-    const todosArray = todos.map((todo, index) => {
-        return (
-            <div key={index}>
-                <h2>{todo.date.toLocaleString()}</h2>
-                {todo.todos.map((t, index) => {
-                    const classes = ["d-inline"];
-                    t.done && classes.push("done");
-                    return (
-                        <div key={index}>
-                            <input
-                                type="checkbox"
-                                name="todo"
-                                className="d-inline"
-                                // checked={t.done}
-                            />
-                            <p
-                                className={classes.join(" ")}
-                                style={{ color: t.backgroundColor }}>
-                                {t.text}
-                            </p>
-                        </div>
-                    );
-                })}
-            </div>
-        );
-    });
+    let list = [];
+    if (todos.length > 0) {
+        list = todos.map((todo, index) => {
+            let classes = ["m-3"];
+            todo.done && classes.push("done");
+            return (
+                <div key={index} className="m-3">
+                    <input
+                        type="checkbox"
+                        name="todo"
+                        id={`todo${index}`}
+                        className="d-inline"
+                        onChange={() => updateTodo(todo)}
+                        checked={todo.done}
+                        disabled={loading}
+                    />
+                    <label
+                        htmlFor={`todo${index}`}
+                        className={classes.join(" ")}>
+                        {todo.text}
+                    </label>
+                    <Badge variant={todo.priority} className="ml-2 mr-3">
+                        {priorities[todo.priority]}
+                    </Badge>
+                    <Button
+                        variant="dark"
+                        disabled={loading}
+                        onClick={() => handleDelete(todo.timeStamp)}>
+                        Delete
+                    </Button>
+                </div>
+            );
+        });
+    }
+
     return (
         <>
             <NavBar />
-            <div>{todosArray}</div>
-            <Button
-                onClick={() => {
-                    console.log(currentUser.uid);
-                }}>
-                Show Current user
-            </Button>
+            {list.length > 0 ? (
+                <div>
+                    <h2>Todo's for {new Date().toLocaleDateString()}</h2>
+                    {list}
+                </div>
+            ) : (
+                <h1> No ToDo's for {new Date().toLocaleDateString()}</h1>
+            )}
+
             <Footer />
         </>
     );

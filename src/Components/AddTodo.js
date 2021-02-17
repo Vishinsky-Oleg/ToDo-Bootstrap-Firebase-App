@@ -3,6 +3,7 @@ import { Form, Button } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { db } from "../firebase";
+import { useAuth } from "../hoc/AuthenticationProvider";
 import Footer from "./Footer";
 import NavBar from "./Nav";
 
@@ -10,26 +11,40 @@ const AddTodo = (props) => {
     const [date, changeDate] = useState(new Date());
     const [todoText, changeTodoText] = useState("");
     const [priority, changePriority] = useState("");
+    const { currentUser } = useAuth();
+    const priorities = {
+        High: "danger",
+        Average: "warning",
+        Low: "success",
+    };
     const handleSubmit = (e) => {
         e.preventDefault();
+        const cT = new Date();
+
+        const uniqueTimeStamp = `${cT.getDate()}-${
+            cT.getMonth() + 1
+        }-${cT.getFullYear()}t${cT.toLocaleTimeString()}`;
+
         db.collection("users")
-            .doc("user1")
+            .doc(currentUser.uid)
             .set(
                 {
-                    [new Date().toLocaleString()]: {
+                    [uniqueTimeStamp]: {
                         text: todoText,
                         priority: priority,
                         date: date.toLocaleDateString(),
+                        done: false,
+                        timeStamp: uniqueTimeStamp,
                     },
                 },
                 { merge: true }
             )
             .catch((er) => {
-                console.error("Error occured: ", er);
+                console.error("Error occured: ", er.message);
             });
     };
     const handleRadioButton = (e) => {
-        changePriority(e.target.value);
+        changePriority(priorities[e.target.value]);
     };
 
     const handleTextChange = (e) => {

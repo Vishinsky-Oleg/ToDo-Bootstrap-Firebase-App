@@ -36,7 +36,7 @@ export default function Calendar() {
                     { title: "myEvent", date: "2021-02-09" },
                     { title: "myEvent", date: "2021-02-09" },
                     {
-                        title: "myEvent",
+                        title: "SuperEvent",
                         date: "2021-02-09",
                         backgroundColor: "rgba(5,30,55, .3)",
                     },
