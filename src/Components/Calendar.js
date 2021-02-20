@@ -7,6 +7,7 @@ import { useAuth } from "../hoc/AuthenticationProvider";
 import NavBar from "./Nav";
 import Footer from "./Footer";
 import { useHistory } from "react-router-dom";
+import Container from "../Containers/Container";
 
 const Calendar = () => {
     const [todos, changeTodos] = useState([]);
@@ -63,8 +64,7 @@ const Calendar = () => {
         })();
     }, []);
     return (
-        <>
-            <NavBar />
+        <Container>
             <FullCalendar
                 plugins={[dayGridPlugin, interactionPlugin]}
                 initialView="dayGridMonth"
@@ -73,8 +73,7 @@ const Calendar = () => {
                 dayMaxEventRows={true}
                 events={todos}
             />
-            <Footer />
-        </>
+        </Container>
     );
 };
 

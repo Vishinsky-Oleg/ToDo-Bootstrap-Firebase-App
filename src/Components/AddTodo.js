@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import Container from "../Containers/Container";
 import { db } from "../firebase";
 import { useAuth } from "../hoc/AuthenticationProvider";
 import Footer from "./Footer";
@@ -51,8 +52,7 @@ const AddTodo = () => {
         changeTodoText(e.target.value);
     };
     return (
-        <>
-            <NavBar />
+        <Container>
             <Form className="mt-4 mb-4">
                 <Form.Group>
                     <Form.Label>Date:</Form.Label>
@@ -116,8 +116,7 @@ const AddTodo = () => {
                     Add ToDo
                 </Button>
             </Form>
-            <Footer />
-        </>
+        </Container>
     );
 };
 

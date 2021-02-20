@@ -6,7 +6,7 @@ const Footer = () => {
         <Jumbotron
             sticky="bottom"
             fluid
-            className="mt-3 mb-0 p-3 bg-dark text-white-50">
+            className="mt-3 mb-0 p-2 bg-dark text-white-50">
             <h3>Developed by Vishinsky Oleg</h3>
         </Jumbotron>
     );

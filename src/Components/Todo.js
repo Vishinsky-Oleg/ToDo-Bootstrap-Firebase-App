@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Badge, Button} from "react-bootstrap";
+import { Badge, Button } from "react-bootstrap";
 import { db } from "../firebase";
 import { useAuth } from "../hoc/AuthenticationProvider";
 import Footer from "./Footer";
@@ -7,6 +7,7 @@ import NavBar from "./Nav";
 import firebase from "firebase/app";
 
 import "firebase/firestore";
+import Container from "../Containers/Container";
 
 const Todo = (props) => {
     const [todos, changeTodos] = useState([]);
@@ -117,8 +118,7 @@ const Todo = (props) => {
     }
 
     return (
-        <>
-            <NavBar />
+        <Container>
             {list.length > 0 ? (
                 <div>
                     <h2>Todo's for {dateToGet}</h2>
@@ -127,9 +127,7 @@ const Todo = (props) => {
             ) : (
                 <h1> No ToDo's for {dateToGet}</h1>
             )}
-
-            <Footer />
-        </>
+        </Container>
     );
 };
 
