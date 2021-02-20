@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Badge, Button } from "react-bootstrap";
 import { db } from "../firebase";
 import { useAuth } from "../hoc/AuthenticationProvider";
-import Footer from "./Footer";
-import NavBar from "./Nav";
 import firebase from "firebase/app";
 
 import "firebase/firestore";
@@ -47,11 +45,9 @@ const Todo = (props) => {
 
     const handleDelete = (timeStamp) => {
         setLoading(true);
-        const updatedTodos = todos.filter((todo) => {
-            if (todo.timeStamp !== timeStamp) {
-                return todo;
-            }
-        });
+        const updatedTodos = todos.filter(
+            (todo) => todo.timeStamp !== timeStamp && todo
+        );
         changeTodos(updatedTodos);
         dbRef
             .update({

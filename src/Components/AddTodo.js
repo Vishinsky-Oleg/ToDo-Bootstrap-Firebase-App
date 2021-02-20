@@ -5,13 +5,12 @@ import "react-datepicker/dist/react-datepicker.css";
 import Container from "../Containers/Container";
 import { db } from "../firebase";
 import { useAuth } from "../hoc/AuthenticationProvider";
-import Footer from "./Footer";
-import NavBar from "./Nav";
 
 const AddTodo = () => {
     const [date, changeDate] = useState(new Date());
     const [todoText, changeTodoText] = useState("");
     const [priority, changePriority] = useState("");
+    const [loading, changeLoading] = useState(false);
     const { currentUser } = useAuth();
     const priorities = {
         High: "danger",
@@ -19,6 +18,7 @@ const AddTodo = () => {
         Low: "success",
     };
     const handleSubmit = (e) => {
+        changeLoading(true);
         e.preventDefault();
         const cT = new Date();
 
@@ -40,6 +40,9 @@ const AddTodo = () => {
                 },
                 { merge: true }
             )
+            .then(() => {
+                changeLoading(false);
+            })
             .catch((er) => {
                 console.error("Error occured: ", er.message);
             });
@@ -112,7 +115,7 @@ const AddTodo = () => {
                         onChange={handleRadioButton}
                     />
                 </Form.Group>
-                <Button type="submit" onClick={handleSubmit}>
+                <Button type="submit" onClick={handleSubmit} disabled={loading}>
                     Add ToDo
                 </Button>
             </Form>

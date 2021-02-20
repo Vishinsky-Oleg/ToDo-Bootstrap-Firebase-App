@@ -19,7 +19,7 @@ const SignUp = () => {
         return () => {
             changeMounted(false);
         };
-    });
+    },[]);
 
     const handleEmailChange = (e) => {
         mounted && changeEmail(e.target.value);

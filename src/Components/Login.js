@@ -31,7 +31,7 @@ const Login = () => {
         return () => {
             changeMounted(false);
         };
-    });
+    }, []);
 
     const handleEmail = (e) => {
         mounted && changeEmail(e.target.value);

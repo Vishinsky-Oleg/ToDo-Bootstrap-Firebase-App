@@ -1,12 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, FormLabel, Button, Card, Alert } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../hoc/AuthenticationProvider";
 import Container from "../Containers/Container";
-import Footer from "./Footer";
-import Nav from "./Nav";
 
 const UpdateProfile = () => {
+    const [mounted, changeMounted] = useState(true);
     const [email, changeEmail] = useState("");
     const [password, changePassword] = useState("");
     const [confirmPassword, changeConfirmPassword] = useState("");
@@ -16,16 +15,24 @@ const UpdateProfile = () => {
     const history = useHistory();
 
     const handleEmailChange = (e) => {
-        changeEmail(e.target.value);
+        mounted && changeEmail(e.target.value);
     };
 
     const handlePasswordChange = (e) => {
-        changePassword(e.target.value);
+        mounted && changePassword(e.target.value);
     };
 
     const handlePasswordConfirmChange = (e) => {
-        changeConfirmPassword(e.target.value);
+        mounted && changeConfirmPassword(e.target.value);
     };
+
+    useEffect(() => {
+        changeMounted(true);
+
+        return () => {
+            changeMounted(false);
+        };
+    }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
