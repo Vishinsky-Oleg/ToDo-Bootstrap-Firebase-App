@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { Form, FormLabel, Row, Button, Card, Alert } from "react-bootstrap";
+import { Form, FormLabel, Button, Card, Alert } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../hoc/AuthenticationProvider";
 import Footer from "./Footer";
 import Nav from "./Nav";
 
-export default function UpdateProfile() {
+const UpdateProfile = () => {
     const [email, changeEmail] = useState("");
     const [password, changePassword] = useState("");
     const [confirmPassword, changeConfirmPassword] = useState("");
@@ -59,7 +59,6 @@ export default function UpdateProfile() {
         <>
             <div
                 className="d-flex flex-column justify-content-between"
-                // md={3}
                 style={{ height: "100vh" }}>
                 <Nav />
                 <Card style={{ maxWidth: 450, margin: "0 auto" }}>
@@ -116,4 +115,6 @@ export default function UpdateProfile() {
             </div>
         </>
     );
-}
+};
+
+export default UpdateProfile;

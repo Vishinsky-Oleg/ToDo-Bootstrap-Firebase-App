@@ -1,17 +1,10 @@
-import React, { useState } from "react";
-import {
-    Dropdown,
-    Form,
-    FormLabel,
-    Row,
-    Button,
-    Card,
-    Alert,
-} from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Form, FormLabel, Row, Button, Card, Alert } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../hoc/AuthenticationProvider";
 
-export default function SignUp() {
+const SignUp = () => {
+    const [mounted, changeMounted] = useState(true);
     const [email, changeEmail] = useState("");
     const [password, changePassword] = useState("");
     const [confirmPassword, changeConfirmPassword] = useState("");
@@ -20,16 +13,24 @@ export default function SignUp() {
     const [loading, setLoading] = useState(false);
     const history = useHistory();
 
+    useEffect(() => {
+        changeMounted(true);
+
+        return () => {
+            changeMounted(false);
+        };
+    });
+
     const handleEmailChange = (e) => {
-        changeEmail(e.target.value);
+        mounted && changeEmail(e.target.value);
     };
 
     const handlePasswordChange = (e) => {
-        changePassword(e.target.value);
+        mounted && changePassword(e.target.value);
     };
 
     const handlePasswordConfirmChange = (e) => {
-        changeConfirmPassword(e.target.value);
+        mounted && changeConfirmPassword(e.target.value);
     };
 
     const handleSubmit = async (e) => {
@@ -99,4 +100,6 @@ export default function SignUp() {
             </Card>
         </Row>
     );
-}
+};
+
+export default SignUp;

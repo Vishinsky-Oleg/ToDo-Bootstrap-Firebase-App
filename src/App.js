@@ -1,7 +1,5 @@
 import "./App.css";
 import Calendar from "./Components/Calendar";
-import Nav from "./Components/Nav";
-import Footer from "./Components/Footer";
 import AddTodo from "./Components/AddTodo";
 import { Container } from "react-bootstrap";
 import Todo from "./Components/Todo";
@@ -14,7 +12,6 @@ import PrivateRoute from "./hoc/PrivateRoute";
 import UpdateProfile from "./Components/UpdateProfile";
 
 function App() {
-    // console.log(new Date().toDateString());
     return (
         <Container>
             <AuthProvider>
@@ -40,6 +37,10 @@ function App() {
                     <PrivateRoute path="/calendar" exact>
                         <Calendar />
                     </PrivateRoute>
+                    <Route
+                        path="/:date"
+                        render={(props) => <Todo dynamic={true} {...props} />}
+                    />
                 </Switch>
             </AuthProvider>
         </Container>

@@ -3,7 +3,7 @@ import { Form, FormLabel, Row, Button, Card, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hoc/AuthenticationProvider";
 
-export default function Login() {
+const ResetPassword = () => {
     const [email, changeEmail] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
@@ -58,4 +58,6 @@ export default function Login() {
             </Card>
         </Row>
     );
-}
+};
+
+export default ResetPassword;

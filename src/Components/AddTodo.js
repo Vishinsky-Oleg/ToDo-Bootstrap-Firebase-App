@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -7,7 +7,7 @@ import { useAuth } from "../hoc/AuthenticationProvider";
 import Footer from "./Footer";
 import NavBar from "./Nav";
 
-const AddTodo = (props) => {
+const AddTodo = () => {
     const [date, changeDate] = useState(new Date());
     const [todoText, changeTodoText] = useState("");
     const [priority, changePriority] = useState("");

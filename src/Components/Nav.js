@@ -4,7 +4,7 @@ import { LinkContainer } from "react-router-bootstrap";
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../hoc/AuthenticationProvider";
 
-export default function NavBar() {
+const NavBar = () => {
     const { currentUser, logout } = useAuth();
     const history = useHistory();
     const handleLogout = async () => {
@@ -44,4 +44,6 @@ export default function NavBar() {
             </Navbar.Collapse>
         </Navbar>
     );
-}
+};
+
+export default NavBar;

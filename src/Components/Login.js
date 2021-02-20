@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Form, FormLabel, Row, Button, Card, Alert } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../hoc/AuthenticationProvider";
 
-export default function Login() {
+const Login = () => {
+    const [mounted, changeMounted] = useState(true);
     const [email, changeEmail] = useState("");
     const [password, changePassword] = useState("");
     const [error, setError] = useState("");
@@ -24,12 +25,20 @@ export default function Login() {
         setLoading(false);
     }
 
+    useEffect(() => {
+        changeMounted(true);
+
+        return () => {
+            changeMounted(false);
+        };
+    });
+
     const handleEmail = (e) => {
-        changeEmail(e.target.value);
+        mounted && changeEmail(e.target.value);
     };
 
     const handlePassword = (e) => {
-        changePassword(e.target.value);
+        mounted && changePassword(e.target.value);
     };
 
     return (
@@ -77,4 +86,6 @@ export default function Login() {
             </Card>
         </Row>
     );
-}
+};
+
+export default Login;

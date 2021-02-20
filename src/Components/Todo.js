@@ -1,6 +1,5 @@
-import { isArraysEqual } from "@fullcalendar/react";
 import React, { useEffect, useState } from "react";
-import { Badge, Button, Spinner } from "react-bootstrap";
+import { Badge, Button} from "react-bootstrap";
 import { db } from "../firebase";
 import { useAuth } from "../hoc/AuthenticationProvider";
 import Footer from "./Footer";
@@ -14,6 +13,9 @@ const Todo = (props) => {
     const [loading, setLoading] = useState(false);
     const { currentUser } = useAuth();
     const dbRef = db.collection("users").doc(currentUser.uid);
+    const dateToGet = props.dynamic
+        ? props.match.url.replace("/", "").replaceAll("-", "/")
+        : new Date().toLocaleDateString();
 
     const priorities = {
         danger: "High",
@@ -40,13 +42,9 @@ const Todo = (props) => {
             .then(() => {
                 setLoading(false);
             });
-        // .catch((e) => {
-        //     setError(e.toString());
-        // });
     };
 
     const handleDelete = (timeStamp) => {
-        // setLoading(true);
         setLoading(true);
         const updatedTodos = todos.filter((todo) => {
             if (todo.timeStamp !== timeStamp) {
@@ -69,9 +67,7 @@ const Todo = (props) => {
             if (query) {
                 const processedQuery = Object.entries(query)
                     .filter(
-                        (instance) =>
-                            instance[1].date ===
-                                new Date().toLocaleDateString() && instance
+                        (instance) => instance[1].date === dateToGet && instance
                     )
                     .map((instance) => {
                         let O = {
@@ -125,11 +121,11 @@ const Todo = (props) => {
             <NavBar />
             {list.length > 0 ? (
                 <div>
-                    <h2>Todo's for {new Date().toLocaleDateString()}</h2>
+                    <h2>Todo's for {dateToGet}</h2>
                     {list}
                 </div>
             ) : (
-                <h1> No ToDo's for {new Date().toLocaleDateString()}</h1>
+                <h1> No ToDo's for {dateToGet}</h1>
             )}
 
             <Footer />

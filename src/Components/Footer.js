@@ -1,7 +1,7 @@
 import React from "react";
 import { Jumbotron } from "react-bootstrap";
 
-export default function Footer() {
+const Footer = () => {
     return (
         <Jumbotron
             sticky="bottom"
@@ -10,4 +10,6 @@ export default function Footer() {
             <h3>Developed by Vishinsky Oleg</h3>
         </Jumbotron>
     );
-}
+};
+
+export default Footer;

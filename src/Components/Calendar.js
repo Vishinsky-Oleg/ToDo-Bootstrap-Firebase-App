@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
-// import DatePicker from "react-date-picker";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import { db } from "../firebase";
 import { useAuth } from "../hoc/AuthenticationProvider";
-
 import NavBar from "./Nav";
 import Footer from "./Footer";
+import { useHistory } from "react-router-dom";
 
-export default function Calendar() {
+const Calendar = () => {
     const [todos, changeTodos] = useState([]);
     const { currentUser } = useAuth();
     const dbRef = db.collection("users").doc(currentUser.uid);
+    const history = useHistory();
 
     const handleDateClick = (arg) => {
-        console.log(arg.date.toLocaleString());
+        history.push(arg.date.toLocaleDateString().replaceAll("/", "-"));
+        // console.log();
     };
 
     const pickColor = (priority, done) => {
@@ -75,4 +76,6 @@ export default function Calendar() {
             <Footer />
         </>
     );
-}
+};
+
+export default Calendar;
